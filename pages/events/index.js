@@ -1,10 +1,18 @@
 import EventList from "@/components/events/event-list";
 import EventsSearch from "@/components/events/events-search";
-import { getAllEvents } from "@/dummy-data";
+import { getAllEvents } from "@/api";
 import { useRouter } from "next/router";
 
-const EventsPage = () => {
-  const events = getAllEvents();
+export const getServerSideProps = async () => {
+  const events = await getAllEvents();
+  return {
+    props: {
+      events,
+    },
+  };
+};
+
+const EventsPage = ({ events = [] }) => {
   const router = useRouter();
 
   const handleSearch = (year, month) => {
