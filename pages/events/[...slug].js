@@ -2,6 +2,7 @@ import EventList from "@/components/events/event-list";
 import { formatEventsResponse } from "@/api";
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import Head from "next/head";
 
 const FilteredEventsPage = () => {
   const router = useRouter();
@@ -17,6 +18,13 @@ const FilteredEventsPage = () => {
     month < 1 ||
     month > 12;
 
+  const head = (
+    <Head>
+      <title>Filtered events</title>
+      <meta name="description" content={`All events from ${month}/${year}`} />
+    </Head>
+  );
+
   const { data } = useSWR(
     "https://next-events-dfd52-default-rtdb.firebaseio.com/events.json",
     (url) => fetch(url).then((res) => res.json())
@@ -24,7 +32,12 @@ const FilteredEventsPage = () => {
   const events = data ? formatEventsResponse(data) : undefined;
 
   if (!filterData || !events) {
-    return <p className="center">Loading...</p>;
+    return (
+      <>
+        {head}
+        <p className="center">Loading...</p>
+      </>
+    );
   }
 
   const filteredEvents = events.filter((event) => {
@@ -35,15 +48,26 @@ const FilteredEventsPage = () => {
   });
 
   if (isFilterInvalid) {
-    return <p className="center">Invalid filter. Please adjust your values.</p>;
+    return (
+      <>
+        {head}
+        <p className="center">Invalid filter. Please adjust your values.</p>
+      </>
+    );
   }
 
   if (!filteredEvents || filteredEvents.length === 0) {
-    <p className="center">No events found for the chosen filter</p>;
+    return (
+      <>
+        {head}
+        <p className="center">No events found for the chosen filter</p>
+      </>
+    );
   }
 
   return (
     <div>
+      {head}
       <h1>Filtered events page</h1>
       <EventList events={filteredEvents} />
     </div>

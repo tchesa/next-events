@@ -2,6 +2,7 @@ import EventList from "@/components/events/event-list";
 import EventsSearch from "@/components/events/events-search";
 import { getAllEvents } from "@/api";
 import { useRouter } from "next/router";
+import Head from "next/head";
 
 export const getServerSideProps = async () => {
   const events = await getAllEvents();
@@ -26,6 +27,13 @@ const EventsPage = ({ events = [] }) => {
 
   return (
     <>
+      <Head>
+        <title>All Events</title>
+        <meta
+          name="description"
+          content="Find a lot of great events that allow you to evolve..."
+        />
+      </Head>
       <EventsSearch onSearch={handleSearch} />
       <EventList events={events} />
     </>
